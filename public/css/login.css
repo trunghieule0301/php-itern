@@ -1,0 +1,91 @@
+body {
+    font-family: "Nunito", sans-serif;
+    background-color: #35aeff;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 705px;
+    width: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+    height: 600px;
+    border-radius: 30px;
+    background-color: #fff;
+}
+
+.text {
+    color: rgb(107, 107, 107);
+}
+
+.button {
+    background-color: #f27d42;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 10px;
+    margin-top: 20px;
+    width: 150px;
+    font-weight: bold;
+    margin-left: 140px;
+}
+
+.button:hover {
+    background-color: #c25f2e;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-weight: bold;
+    margin-left: 140px;
+}
+
+.input {
+    width: 100%;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+label {
+    font-weight: bold;
+}
+
+.error {
+    width: 250px;
+    background-color: rgba(255, 131, 109, 0.8);
+    margin-bottom: 20px;
+    border-radius: 10px;
+    padding: 20px;
+}
