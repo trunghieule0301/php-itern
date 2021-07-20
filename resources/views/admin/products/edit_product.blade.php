@@ -44,6 +44,10 @@
                             <input type="text" value="{{$edit_value->product_price}}" name="product_price" class="form-control" id="product_price">
                         </div>
                         <div class="form-group">
+                            <label for="voucher_quantity">Voucher Quantity</label>
+                            <input type="text" value="{{$edit_value->voucher_quantity}}" name="voucher_quantity" class="form-control" id="voucher_quantity">
+                        </div>
+                        <div class="form-group">
                             <input accept="image/*" type="file" name="filenames[]" id="imageFile" style="font-size: 1rem;" hidden>
 
                             <!-- our custom upload button -->

@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,13 +25,24 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
+use Carbon\Carbon;
+
+Route::get('send',[MailController::class, 'send']);
 
 Route::get('productView',function(){
-    $req = request()->all();
-    $result = QueryBuilder::for(Product::class)
-    ->allowedFilters(['product_brand','product_cate'])
-    ->get()->toArray();
-    dd($result);
+    $handle_product = DB::table('users')
+    ->join('model_has_roles','model_has_roles.model_id','=','users.id')
+    ->join('roles','roles.id','=','model_has_roles.role_id')
+    ->where('roles.name','admin')
+    ->get();
+
+    dd($handle_product);
+    foreach($handle_product as $value){
+        if($value->name == "admin"){
+            dd($value);
+        }
+    }
 });
 
 Route::get('authLogin',[UserController::class, 'getAuthLogin'])->middleware('CheckLogedIn');
@@ -45,6 +57,8 @@ Route::group(['prefix'=>'home','middleware' => ['CheckUser']],function(){
     Route::group(['prefix'=>'{cate_name}'],function(){
         Route::get('/',[HomeController::class,'showCategory']);
         Route::get('/{product_slug}',[HomeController::class,'showDetail']);
+        
+        Route::get('/{product_slug}/get_voucher',[HomeController::class, 'get_voucher']);
     });
 
 });
@@ -90,13 +104,25 @@ Route::group(['prefix'=>'adminPage','middleware' => ['CheckLogout','CheckAdmin']
     Route::get('deleteProductImage/{image_id}',[ProductController::class, 'delete_product_image']);
     Route::post('updateProductImage/{image_id}',[ProductController::class, 'update_product_image']);
 
-    Route::get('unactive_product/{image_id}',[ProductController::class, 'unactive_product']);
-    Route::get('active_product/{image_id}',[ProductController::class, 'active_product']);
+    Route::get('unactive_product/{product_id}',[ProductController::class, 'unactive_product']);
+    Route::get('active_product/{product_id}',[ProductController::class, 'active_product']);
+
+    Route::get('unactive_voucher/{product_id}',[ProductController::class, 'unactive_voucher']);
+    Route::get('active_voucher/{product_id}',[ProductController::class, 'active_voucher']);
 
     Route::post('updateProduct/{product_id}',[ProductController::class, 'update_product']);
     Route::post('saveProduct',[ProductController::class, 'save_product']);
 
+    //Route::get('get_voucher/{product_id}',[ProductController::class, 'get_voucher']);
+
     Route::get('addProductImage',[ProductController::class, 'add_product_image']);
     Route::post('saveProductImage',[ProductController::class, 'save_product_image']);
+
+
+    //Email
+
+    Route::get('manage_email',[MailController::class, 'manage_email']);
+    Route::get('send_email',[MailController::class, 'send_email']);
+    Route::get('delete_email/{email_id}',[MailController::class, 'delete_email']);
 
 });

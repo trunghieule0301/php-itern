@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB,Session;
+use DB,Session,Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Product;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -63,6 +63,7 @@ class ProductController extends Controller
         $temp = preg_replace('/\s+/','-',$request->product_name);
         $temp = strtolower($temp);
         $data['product_slug'] = $temp; 
+        $data['voucher_quantity'] = $request->voucher_quantity; 
         $data['product_name'] = $request->product_name;
         $data['product_cate'] = $request->product_cate;
         $data['product_brand'] = $request->product_brand;
@@ -131,6 +132,8 @@ class ProductController extends Controller
         $temp = preg_replace('/\s+/','-',$request->product_name);
         $temp = strtolower($temp);
         $data['product_slug'] = $temp; 
+        $data['voucher_quantity'] = 0;
+        $data['voucher_enabled'] = 0;
         $data['product_name'] = $request->product_name;
         $data['product_status'] = $request->product_status;
         $data['product_cate'] = $request->product_cate;
@@ -183,9 +186,19 @@ class ProductController extends Controller
         return Redirect::to('adminPage/showProducts');
     }
 
+    public function unactive_voucher($product_id){
+        DB::table('product')->where('product_id', $product_id)->update(['voucher_enabled'=>0]);
+        Session::put('inform','Disabled voucher successfully');
+        return Redirect::to('adminPage/showProducts');
+    }
+
+    public function active_voucher($product_id){
+        DB::table('product')->where('product_id', $product_id)->update(['voucher_enabled'=>1]);
+        Session::put('inform','Enabled voucher successfully');
+        return Redirect::to('adminPage/showProducts');
+    }
+
     public function show_products(){
-        $filterCate = DB::table('categories')->get();
-        $filterBrand = DB::table('brand')->get();
 
         $allProducts = QueryBuilder::for(Product::class)
         ->join('categories','categories.cate_id','=','product.product_cate')
@@ -204,6 +217,9 @@ class ProductController extends Controller
                 $selectedBrand = request('filter')['product_brand'];
             }
         }
+        
+        $filterCate = DB::table('categories')->get();
+        $filterBrand = DB::table('brand')->get();
 
         $show_products = view('admin/products/show_products')
         ->with('products', $allProducts)

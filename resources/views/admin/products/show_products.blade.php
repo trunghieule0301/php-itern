@@ -129,6 +129,8 @@
             <th>Price</th>
             <th>Status</th>
             <th>Image</th>
+            <th>Voucher Enabled</th>
+            <th>Voucher Qty</th>
             <th style="width:30px;"></th>
           </tr>
         </thead>
@@ -162,6 +164,21 @@
             <embed type="{{$product->product_image_mime}}" src='data:{{$product->product_image_mime}};base64,{{base64_encode($product->product_image)}}' width="50" />
             
             </td>
+            <td>
+            <?php
+                if($product->voucher_enabled == 0){
+            ?>
+                <a class="btn btn-success" style="width:70px;" href="{{URL::to('adminPage/active_voucher/'.$product->product_id)}}"><span>Enable</span></a>
+            <?php
+                }
+                else{
+            ?>
+                <a class="btn btn-outline-success" style="width:70px;" href="{{URL::to('adminPage/unactive_voucher/'.$product->product_id)}}"><span>Enabled</span></a>
+            <?php
+                }
+            ?>
+            </td>
+            <td>{{$product->voucher_quantity}}</td>
             <td>
                 <div style="display: flex; align-items: center;">
                     <div style="margin-right: 15px;">

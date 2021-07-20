@@ -274,7 +274,33 @@ https://templatemo.com/tm-559-zay-shop
                                     <p class="text-muted"><strong>{{$product->brand_name}}</strong></p>
                                 </li>
                             </ul>
-
+                            @if($product->voucher_enabled == 1 && Auth::check())
+                            <h6>Voucher:</h6>
+                            <div style="width:450px !important;" class="input-group mb-3">
+                                @if($voucher == null)
+                                <h6 class="form-control">
+                                    <?php 
+                                        $inform = Session::get('inform');
+                                        if($inform){
+                                            echo $inform;
+                                            Session::put('inform', null);
+                                        }
+                                        else{
+                                            echo 'Get your voucher';
+                                        }
+                                    ?>
+                                </h6>
+                                <div class="input-group-append">
+                                    <a href="{{$url.'/get_voucher'}}" class="btn btn-success" id="button-addon2">Get voucher</a>
+                                </div>
+                                @else
+                                <h6 class="form-control">{{$voucher->voucher_code}}</h6>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button" id="button-addon2">Your voucher</button>
+                                </div>
+                                @endif
+                            </div>
+                            @endif
                             <h6>Description:</h6>
                             <p>{{$product->product_desc}}</p>
                             <ul class="list-inline">

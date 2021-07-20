@@ -8,6 +8,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Listeners\ReadTrackingHandling;
 use App\Events\ReadTracking;
+use App\Listeners\LoginListener;
+use Illuminate\Auth\Events\Login;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ReadTracking::class => [
             ReadTrackingHandling::class,
+        ],
+        Login::class => [
+            LoginListener::class,
         ],
     ];
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB,Session,Auth;
 use Illuminate\Support\Facades\Redirect;
+use Carbon\Carbon;
 Session_start();
 
 class HomeController extends Controller
@@ -53,6 +54,16 @@ class HomeController extends Controller
     }
 
     function showDetail($cate_name, $product_slug){
+        DB::table('product')->where('product_slug',$product_slug)->update(['last_access_time' => Carbon::now('Asia/Ho_Chi_Minh')]);
+        $url = url()->current();
+        $out_of_voucher = false;
+        $message = '';
+        $voucher = null;
+        $product_id = DB::table('product')->where('product_slug',$product_slug)->first()->product_id;
+        if(Auth::check()){
+            $user_id = Auth::user()->id;
+            $voucher = DB::table('voucher')->where('model_id',$user_id)->where('product_id',$product_id)->first();
+        }
 
         if(Auth::check()){
             $track = array();
@@ -97,6 +108,51 @@ class HomeController extends Controller
         return view('frontend/product_detail')
         ->with('product',$product)
         ->with('products',$productName)
-        ->with('check',$check);
+        ->with('check',$check)
+        ->with('voucher',$voucher)
+        ->with('url',$url);
     }
+
+    public function get_voucher($cate_name, $product_slug){
+        $product_id = DB::table('product')->where('product_slug',$product_slug)->first()->product_id;
+        $voucher_quantity = DB::table('product')->where('product_id',$product_id)->first()->voucher_quantity;
+        $user_id = Auth::user()->id;
+
+        //Generate voucher code
+        $chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $res = "";
+        for ($i = 0; $i < 10; $i++) {
+            $res .= $chars[mt_rand(0, strlen($chars)-1)];
+        }
+
+        //check same voucher code
+        $voucher = DB::table('voucher')->where('voucher_code',$res)->first();
+        if($voucher != null){
+            get_voucher($cate_name, $product_slug);
+        }
+
+        $data = array();
+        $data['model_id'] = $user_id;
+        $data['product_id'] = $product_id;
+        $data['voucher_code'] = $res;
+        $data['created_at'] = new \DateTime();
+
+        if($voucher_quantity != 0){
+            DB::beginTransaction();
+            try {
+                $voucher_quantity--;
+                DB::table('product')->where('product_id',$product_id)->update(['voucher_quantity' => $voucher_quantity]);
+                DB::table('voucher')->insert($data);
+                
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+                
+            }
+            return Redirect::back();
+        }
+        Session::put('inform','There is no more available voucher.');
+        return Redirect::back();
+    }
+
 }

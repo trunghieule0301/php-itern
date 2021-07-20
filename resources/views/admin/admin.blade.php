@@ -137,6 +137,14 @@ function hideURLbar(){
 						
                     </ul>
                 </li>
+
+                <li>
+                    <a href="{{URL::to('adminPage/manage_email')}}">
+                        <i class="fa fa-envelope" style="font-size:18px;"></i>
+                        <span>Emails</span>
+                    </a>
+                </li>
+                
                 
             </ul>            </div>
         <!-- sidebar menu end-->
